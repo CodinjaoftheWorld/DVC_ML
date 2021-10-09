@@ -1,18 +1,47 @@
 schema: '2.0'
 stages:
+  always_run:
+    cmd: python rough/test.py
+    outs:
+    - path: rough/test.txt
+      md5: 0b26e313ed4a7ca6904b0e9369e5b957
+      size: 19
   load_data:
     cmd: python src/stage_01_load_save.py --config=config/config.yaml
     deps:
     - path: config/config.yaml
-      md5: 6afc04fbe518dd98c66a0850aa29ea00
-      size: 209
+      md5: 9b69cba4800a1939eba31ed5623e6a4e
+      size: 284
     - path: src/stage_01_load_save.py
       md5: 3c273b6ad51b9fd7362fcf3146981392
       size: 1039
     - path: src/utils/all_utils.py
-      md5: fc868dcf2fa41a06baafd4606be47e00
-      size: 348
+      md5: 3acc3cf6b6b4cfb8e195e3d82502761a
+      size: 495
     outs:
     - path: artifacts/raw_local_dir/data.csv
       md5: 7d814a1bda02145efe703f4e1c01847a
       size: 91999
+  split_data:
+    cmd: python src/stage_02_split_data.py --config=config/config.yaml --params=params.yaml
+    deps:
+    - path: config/config.yaml
+      md5: 9b69cba4800a1939eba31ed5623e6a4e
+      size: 284
+    - path: src/stage_02_split_data.py
+      md5: 8c86fe3953959b6238a0f9392ac09971
+      size: 1654
+    - path: src/utils/all_utils.py
+      md5: 3acc3cf6b6b4cfb8e195e3d82502761a
+      size: 495
+    params:
+      params.yaml:
+        base.random_state: 42
+        base.test_size: 0.3
+    outs:
+    - path: artifacts/split_data_dir/test.csv
+      md5: 3a3eef9f920deae72cb9bcd7b91231f1
+      size: 27688
+    - path: artifacts/split_data_dir/train.csv
+      md5: 5e5a3523f0fba3925dc577c3baf2c5cd
+      size: 64457
